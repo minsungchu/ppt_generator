@@ -61,7 +61,7 @@ class MyApp(QWidget):
         self.setWindowTitle('스트리밍용 가사 PPT 생성 프로그램')
         self.setWindowIcon(QIcon('schana_icon.jpg'))
         self.move(200, 100)
-        self.resize(1400, 800)
+        self.resize(1000, 800)
         self.show()
 
         """이벤트 핸들러 등록"""
@@ -81,16 +81,25 @@ class MyApp(QWidget):
                     ccm_lyrics.append(ccm_lyrics_raw[idx])
                     break
             if idx % 2 == 0:
-                ccm_lyrics.append(ccm_lyrics_raw[idx] + "\n" + ccm_lyrics_raw[idx+1])
+                if ccm_lyrics_raw[idx + 1] == "":
+                    ccm_lyrics.append(ccm_lyrics_raw[idx])
+                else:
+                    ccm_lyrics.append(ccm_lyrics_raw[idx] + "\n" + ccm_lyrics_raw[idx + 1])
 
         for idx in range(0, len(ccm_lyrics)):
             slide = pptFile.slides[idx]
-            title = slide.shapes[1]
-            title.text = ccm_title
-            lyrics = slide.shapes[0]
-            lyrics.text = ccm_lyrics[idx]
+            if slide.shapes[0].name == "title":
+                title = slide.shapes[0]
+                title.text = ccm_title
+                lyrics = slide.shapes[1]
+                lyrics.text = ccm_lyrics[idx]
+            else:
+                title = slide.shapes[1]
+                title.text = ccm_title
+                lyrics = slide.shapes[0]
+                lyrics.text = ccm_lyrics[idx]
 
-        pptFile.save("./" + ccm_title + ".pptx")
+        pptFile.save("../" + ccm_title + ".pptx")
 
 
 if __name__ == '__main__':
